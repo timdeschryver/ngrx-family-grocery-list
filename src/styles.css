@@ -1,0 +1,34 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import url('https://fonts.googleapis.com/css?family=Montserrat|Raleway');
+
+html,
+body {
+  margin: 0 auto;
+  width: 920px;
+  line-height: 1.5;
+}
+
+body {
+  margin: 0 auto;
+  font-family: 'Raleway', sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Montserrat', sans-serif;
+}
+
+h1 {
+  font-size: 36px;
+  line-height: 1.125em;
+  font-weight: 300;
+}
+
+h2 {
+  font-size: 24px;
+  line-height: 1.25em;
+  font-weight: 300;
+}
