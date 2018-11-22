@@ -31,6 +31,28 @@ export const addGrocery = ({
   };
 };
 
+export const ADD_GROCERY_STORAGE = '[Grocery Storage] Add grocery to list';
+export const addGroceryStorage = ({
+  id = uuid(),
+  description = '',
+  familyMemberId = '',
+  importance = 0,
+  checkedOffOn = null,
+  createdOn = Date.now(),
+}) => {
+  return {
+    type: ADD_GROCERY_STORAGE as typeof ADD_GROCERY_STORAGE,
+    payload: {
+      id,
+      description,
+      familyMemberId,
+      importance,
+      createdOn,
+      checkedOffOn,
+    },
+  };
+};
+
 export const CHECK_OFF_GROCERY_PERSON_PAGE =
   '[Grocery Person Page] Check off grocery';
 export const checkOffGroceryPersonPage = ({
@@ -57,6 +79,18 @@ export const checkOffGroceryFamilyPage = ({
   },
 });
 
+export const CHECK_OFF_GROCERY_STORAGE = '[Grocery Storage] Check off grocery';
+export const checkOffGroceryStorage = ({
+  id = '',
+  checkedOffOn = Date.now(),
+}) => ({
+  type: CHECK_OFF_GROCERY_STORAGE as typeof CHECK_OFF_GROCERY_STORAGE,
+  payload: {
+    id,
+    checkedOffOn,
+  },
+});
+
 export const REMOVE_CHECKED_OFF_GROCERIES =
   '[Grocery Person Page] Remove checked off groceries from list';
 export const removeCheckedOffGroceries = ({ familyMemberId = '' }) => ({
@@ -64,11 +98,23 @@ export const removeCheckedOffGroceries = ({ familyMemberId = '' }) => ({
   payload: { familyMemberId },
 });
 
+export const REMOVE_CHECKED_OFF_GROCERIES_STORAGE =
+  '[Grocery Storage] Remove checked off groceries from list';
+export const removeCheckedOffGroceriesStorage = ({ familyMemberId = '' }) => ({
+  type: REMOVE_CHECKED_OFF_GROCERIES_STORAGE as typeof REMOVE_CHECKED_OFF_GROCERIES_STORAGE,
+  payload: { familyMemberId },
+});
+
+// REMOVE_CHECKED_OFF_GROCERIES,
+
 export type GroceriesActions =
   | ReturnType<typeof addGrocery>
   | ReturnType<typeof checkOffGroceryPersonPage>
   | ReturnType<typeof checkOffGroceryFamilyPage>
-  | ReturnType<typeof removeCheckedOffGroceries>;
+  | ReturnType<typeof removeCheckedOffGroceries>
+  | ReturnType<typeof addGroceryStorage>
+  | ReturnType<typeof checkOffGroceryStorage>
+  | ReturnType<typeof removeCheckedOffGroceriesStorage>;
 
 export const adapter: EntityAdapter<Grocery> = createEntityAdapter<Grocery>({
   sortComparer: (a, b) => {
@@ -89,16 +135,19 @@ export function stateReducer(
 ): State {
   switch (action.type) {
     case ADD_GROCERY:
+    case ADD_GROCERY_STORAGE:
       return adapter.addOne(action.payload, state);
 
     case CHECK_OFF_GROCERY_PERSON_PAGE:
     case CHECK_OFF_GROCERY_FAMILY_PAGE:
+    case CHECK_OFF_GROCERY_STORAGE:
       return adapter.updateOne(
         { id: action.payload.id, changes: action.payload },
         state,
       );
 
     case REMOVE_CHECKED_OFF_GROCERIES:
+    case REMOVE_CHECKED_OFF_GROCERIES_STORAGE:
       const idsToDelete = (<string[]>state.ids)
         .map(groceryId => state.entities[groceryId])
         .filter(
@@ -129,6 +178,16 @@ export function persistStateReducer(_reducer: ActionReducer<State>) {
   };
 }
 
-export const reducer = persistStateReducer(stateReducer);
+export function updateStateReducer(_reducer: ActionReducer<State>) {
+  return (state: State | undefined, action: Action) => {
+    if (action.type === 'UPDATE_GROCERIES_STATE') {
+      return (<any>action).payload.newState;
+    }
+
+    return _reducer(state, action);
+  };
+}
+
+export const reducer = updateStateReducer(persistStateReducer(stateReducer));
 
 export const { selectIds, selectEntities, selectAll } = adapter.getSelectors();

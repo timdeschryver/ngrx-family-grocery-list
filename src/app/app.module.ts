@@ -5,6 +5,7 @@ import { MatListModule, MatButtonModule } from '@angular/material';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { EffectsModule } from '@ngrx/effects';
 
 import { environment } from '../environments/environment';
 
@@ -12,6 +13,7 @@ import { AppComponent } from './app.component';
 import { reducers, metaReducers } from './reducers';
 import { AppRoutingModule } from './app-routing.module';
 import { HomePageComponent } from './pages/home-page.component';
+import { LocalStorageEffects } from './effects/localStorage.effects';
 
 @NgModule({
   declarations: [AppComponent, HomePageComponent],
@@ -34,6 +36,7 @@ import { HomePageComponent } from './pages/home-page.component';
         },
       },
     }),
+    EffectsModule.forRoot([LocalStorageEffects]),
     StoreDevtoolsModule.instrument({
       name: 'Family grocery list',
       logOnly: environment.production,
