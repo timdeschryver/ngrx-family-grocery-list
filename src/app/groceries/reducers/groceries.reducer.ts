@@ -105,8 +105,6 @@ export const removeCheckedOffGroceriesStorage = ({ familyMemberId = '' }) => ({
   payload: { familyMemberId },
 });
 
-// REMOVE_CHECKED_OFF_GROCERIES,
-
 export type GroceriesActions =
   | ReturnType<typeof addGrocery>
   | ReturnType<typeof checkOffGroceryPersonPage>
@@ -188,6 +186,8 @@ export function updateStateReducer(_reducer: ActionReducer<State>) {
   };
 }
 
-export const reducer = updateStateReducer(persistStateReducer(stateReducer));
+export function reducer(state: State | undefined, action: Action) {
+  return updateStateReducer(persistStateReducer(stateReducer))(state, action);
+}
 
 export const { selectIds, selectEntities, selectAll } = adapter.getSelectors();
